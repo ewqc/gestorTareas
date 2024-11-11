@@ -1,12 +1,23 @@
 import './styles.css'
 import {Tarea,TareaLista} from './clases'
-import { crearTareaHtml } from './js/funciones'
+import { crearTareaHtml,mostrarPendientes } from './js/funciones'
 
 export const listaTarea = new TareaLista()
-const tarea = new Tarea("Practicar webpack")
 
-listaTarea.nuevaTarea(tarea);
+listaTarea.tareas.forEach(crearTareaHtml);
+mostrarPendientes(listaTarea.tareas);
+// const tarea = new Tarea("Practicar webpack")
 
-crearTareaHtml(tarea);
-console.log(listaTarea);
+// listaTarea.nuevaTarea(tarea);
+
+// crearTareaHtml(tarea);
+//console.log(listaTarea);
+
+//localStorage.setItem('mi-key','ABC1234');
+// sessionStorage.setItem('nombre','Edward')
+
+// setTimeout(()=>{
+//     localStorage.removeItem('mi-key')
+//     sessionStorage.removeItem('nombre')
+// },1500)
 

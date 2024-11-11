@@ -4,6 +4,10 @@ import {listaTarea} from '../index.js'
 //Referencias al HTML
 const divTareaLista = document.querySelector('.todo-list');
 const txtInput = document.querySelector('.new-todo');
+const btnBorrar = document.querySelector('.clear-completed');
+const ulFiltros = document.querySelector('.filters');
+const anchorFiltro = document.querySelectorAll('.filtro');
+const textoPendientes = document.querySelector('.todo-count strong');
 
 export const crearTareaHtml = (tarea)=>{
     const htmlTarea = `
@@ -23,6 +27,16 @@ export const crearTareaHtml = (tarea)=>{
     return div;
 }
 
+export const mostrarPendientes = (tareas)=>{
+    let contador = 0;
+    tareas.forEach( tarea => {
+        if(!tarea.completado){
+            contador++;
+        }
+    })
+    textoPendientes.innerText = contador;
+}
+
 //Eventos
 txtInput.addEventListener('keyup',(evento)=>{
     //console.log(evento);
@@ -32,6 +46,7 @@ txtInput.addEventListener('keyup',(evento)=>{
         //console.log(listaTarea);
         crearTareaHtml(nuevaTarea);
         txtInput.value = '';
+        mostrarPendientes(listaTarea.tareas);
     }
 })
 
@@ -43,6 +58,56 @@ divTareaLista.addEventListener('click',(evento)=>{
     if(nombreElemento.includes('input')){
         listaTarea.marcarCompletado(tareaId);
         tareaElemento.classList.add('completed')
+    }else if(nombreElemento.includes('button')){
+        listaTarea.eliminarTarea(tareaId);
+        divTareaLista.removeChild(tareaElemento);
     }
     //console.log(tareaElemento)
+    //console.log(listaTarea);
+    mostrarPendientes(listaTarea.tareas);
+})
+
+btnBorrar.addEventListener('click',()=>{
+    listaTarea.eliminarCompletados();
+    //console.log(listaTarea);
+
+    for(let i=divTareaLista.children.length - 1; i>=0; i--){
+        const elemento = divTareaLista.children[i];
+        //console.log(elemento)
+        if(elemento.classList.contains('completed')){
+            divTareaLista.removeChild(elemento)
+        }
+    }
+
+})
+ 
+ulFiltros.addEventListener('click', (evento)=>{
+    const filtro = evento.target.text;
+    let contador = 0;
+    if(!filtro) return;
+    anchorFiltro.forEach(elemento => elemento.classList.remove('selected'));
+    evento.target.classList.add('selected');
+
+    for(const elemento of divTareaLista.children){
+        //console.log(elemento);
+        elemento.classList.remove('hidden');
+        const completado = elemento.classList.contains('completed');
+
+        switch(filtro){
+            case 'Pendientes':
+                if(completado){
+                    elemento.classList.add('hidden');
+                }
+                break;
+            case 'Completados':
+                if(!completado){
+                    elemento.classList.add('hidden');
+                }
+                break;
+        }
+        if(!completado){
+            contador ++;
+        }
+    }
+    textoPendientes.innerText = contador;
 })
